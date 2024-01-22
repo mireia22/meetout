@@ -1,32 +1,24 @@
 const { generateToken } = require("../../utils/token");
 const User = require("../models/User-model");
 const bcrypt = require("bcrypt");
-const TokenExpired = require("../models/token-expired-model");
+const { HttpError } = require("../../middlewares/error-middleware");
 
 const register = async (req, res, next) => {
   try {
-    const { name, email, password, adminPassword } = req.body;
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return next(new HttpError("Fill in all the fields."));
+    }
 
     const userExist = await User.findOne({ email });
-    if (userExist) return next(new Error("Email already registered"));
-
-    let userRole = "user";
-    if (adminPassword) {
-      const isAdmin = adminPassword === process.env.ADMIN_PASSWORD;
-
-      if (isAdmin) {
-        userRole = "admin";
-      } else {
-        return next(new Error("Invalid admin password"));
-      }
-    }
+    if (userExist) return next(new HttpError("Email already registered.", 400));
 
     const newUser = new User({
       name,
       email,
       password,
-      role: userRole,
-      avatar: req.file ? req.file.path : "no user avatar",
+      avatar: req.file ? req.file.path : "/front-meetout/assets/avatar.png",
     });
 
     const savedUser = await newUser.save();
@@ -40,29 +32,22 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { email, password, adminPassword } = req.body;
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return next(new HttpError("Fill in all the fields."));
+    }
 
     const validUser = await User.findOne({ email });
-    if (!validUser) return next(new Error("Wrog credentials"));
-
-    if (adminPassword) {
-      const correctAdminPassword = adminPassword === process.env.ADMIN_PASSWORD;
-      if (!correctAdminPassword) {
-        return next(new Error("Invalid admin password"));
-      }
-    }
+    if (!validUser) return next(new HttpError("Email not registered yet."));
 
     const validPassword = bcrypt.compareSync(password, validUser.password);
     if (validPassword) {
       const { password, ...userWithoutPassword } = validUser._doc;
       const token = generateToken(validUser._id, validUser.email);
-
-      const usedToken = new TokenExpired({ token });
-      await usedToken.save();
-      console.log("user without password", userWithoutPassword);
       return res.status(200).json({ token, user: userWithoutPassword });
     } else {
-      return next(new Error("Wrong credentials"));
+      return next(new HttpError("Wrong credentials."));
     }
   } catch (error) {
     return next(error);

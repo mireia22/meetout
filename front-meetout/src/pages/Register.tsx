@@ -7,7 +7,7 @@ const Register = () => {
       <h2>Register</h2>
       <RegisterForm />
       <small>
-        Already have an account?{" "}
+        Already have an account?
         <Link to="/login" className="login">
           Login
         </Link>

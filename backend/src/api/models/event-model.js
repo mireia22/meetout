@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { formatDate, formatTimeAgo } = require("../../utils/formatDates");
 
 const eventSchema = new mongoose.Schema(
   {
@@ -17,16 +16,6 @@ const eventSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-eventSchema.pre("save", function (next) {
-  if (this.date) {
-    this.date = formatDate(this.date);
-  }
-  if (this.createdAt) {
-    this.createdAt = formatTimeAgo(this.createdAt);
-  }
-  next();
-});
 
 const Event = mongoose.model("event", eventSchema, "event");
 

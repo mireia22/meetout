@@ -1,4 +1,3 @@
-// AllEvents.tsx
 import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import { useEventDataContext } from "../hooks/useEventData";
@@ -16,7 +15,7 @@ const AllEvents: React.FC = () => {
         const fetchedEvents = await response.json();
         setEvents(fetchedEvents);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching events:", error);
       }
       setIsLoading(false);
     };
@@ -28,8 +27,8 @@ const AllEvents: React.FC = () => {
   }
 
   return (
-    <section>
-      {events.length > 0 ? (
+    <article>
+      {events && events.length > 0 ? (
         <ul className="all-events">
           {events.map((event) => (
             <li key={event._id}>
@@ -38,9 +37,9 @@ const AllEvents: React.FC = () => {
           ))}
         </ul>
       ) : (
-        <h2 className="self-center">No events found</h2>
+        <h2 className="self-center">No events found.</h2>
       )}
-    </section>
+    </article>
   );
 };
 

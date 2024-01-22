@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { EventsContext, SharedEventsState } from "../context/eventDataContext";
+import { EventsContext } from "../context/eventDataContext";
 
-export const useEventDataContext = (): SharedEventsState => {
+export const useEventDataContext = () => {
   const contextValue = useContext(EventsContext);
 
   if (!contextValue) {

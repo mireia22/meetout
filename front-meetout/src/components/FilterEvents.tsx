@@ -56,11 +56,10 @@ const FilterEvents: React.FC = () => {
   }, [filters]);
 
   return (
-    <section>
+    <article>
       <h3>Find Event: </h3>
-
       <div className="filter">
-        <article>
+        <div>
           <label htmlFor="title">Title</label>
           <input
             type="text"
@@ -69,7 +68,7 @@ const FilterEvents: React.FC = () => {
             onChange={handleInputChange}
             value={filters.title}
           />
-          <label htmlFor="ubication">
+          <label htmlFor="ubication" className="ubication">
             <FaMapMarkerAlt />
             Ubication
           </label>
@@ -80,9 +79,8 @@ const FilterEvents: React.FC = () => {
             onChange={handleInputChange}
             value={filters.ubication}
           />
-        </article>
-        <article></article>
-        <article>
+        </div>
+        <div>
           <label htmlFor="sport">Sport:</label>
           <select
             name="sport"
@@ -109,9 +107,9 @@ const FilterEvents: React.FC = () => {
               </option>
             ))}
           </select>
-        </article>
+        </div>
       </div>
-    </section>
+    </article>
   );
 };
 

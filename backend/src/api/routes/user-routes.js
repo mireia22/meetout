@@ -7,7 +7,6 @@ const {
   deleteAllUsers,
 } = require("../controllers/user-controllers");
 const { isAuth } = require("../../middlewares/auth-middleware");
-const { isAdmin } = require("../../middlewares/admin-middleware");
 const { upload } = require("../../middlewares/files-middleware");
 
 const userRouter = express.Router();

@@ -1,19 +1,15 @@
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  createContext,
-  useState,
-} from "react";
+import { createContext, useState } from "react";
 import { Event } from "../types/Types";
 
 interface EventDataProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
-export interface SharedEventsState {
+
+interface SharedEventsState {
   events: Event[];
-  setEvents: Dispatch<SetStateAction<Event[]>>;
+  setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
 }
+
 export const EventsContext = createContext<SharedEventsState | undefined>(
   undefined
 );

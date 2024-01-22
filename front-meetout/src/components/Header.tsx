@@ -1,43 +1,30 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useUserDataContext } from "../hooks/useUserData";
 import { IoHome } from "react-icons/io5";
+import Avatar from "./Avatar";
+import LogoutBtn from "./buttons/LogoutBtn";
+
 const Header = () => {
-  const { userData, setUserData } = useUserDataContext();
-  const navigate = useNavigate();
-  console.log(userData);
-  const logout = () => {
-    setUserData(null);
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
+  const { userData } = useUserDataContext();
 
   return (
     <header>
       <Link to="/">
-        <IoHome />
+        <IoHome size="1.3rem" />
       </Link>
-      {userData ? (
-        <ul>
-          <li>
-            <Link to="/create_event">Create Event</Link>
-          </li>
+      {userData?.token ? (
+        <nav>
+          <Link to="/create_event">Create Event</Link>
           <Link to="/profile">
-            <li>Profile</li>
+            <Avatar user={userData.user} size="small" />
           </Link>
-
-          <li>
-            <button onClick={logout}>Logout</button>
-          </li>
-        </ul>
+          <LogoutBtn />
+        </nav>
       ) : (
-        <ul>
-          <Link to="/login">
-            <li>Login</li>
-          </Link>
-          <Link to="/register">
-            <li>Register</li>
-          </Link>
-        </ul>
+        <nav>
+          <Link to="/login">Login</Link>
+          <Link to="/register">Register</Link>
+        </nav>
       )}
     </header>
   );

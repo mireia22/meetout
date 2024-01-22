@@ -14,7 +14,6 @@ const getAllUsers = async (req, res, next) => {
 const getUser = async (req, res, next) => {
   try {
     const { id } = req.user;
-    console.log("requser", req.user);
     const user = await User.findById(id)
       .populate("asistedEvents")
       .populate("postedEvents")
@@ -62,7 +61,7 @@ const editUser = async (req, res, next) => {
       },
       { new: true }
     );
-    
+
     return res.status(200).json(updatedUser);
   } catch (error) {
     return res.status(400).json({ message: error.message });

@@ -1,7 +1,6 @@
 const express = require("express");
 const { authRouter } = require("./auth-routes");
 const { userRouter } = require("./user-routes");
-const { siteRouter } = require("./site-routes");
 const { eventRouter } = require("./event-routes");
 const { asistantRouter } = require("./asistant-routes");
 
@@ -10,5 +9,4 @@ mainRouter.use("/auth", authRouter);
 mainRouter.use("/users", userRouter);
 mainRouter.use("/asistants", asistantRouter);
 mainRouter.use("/events", eventRouter);
-mainRouter.use("/sites", siteRouter);
 module.exports = { mainRouter };

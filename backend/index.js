@@ -11,7 +11,13 @@ configCloudinary();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    allowedHeaders: "Content-Type,Authorization,credentials",
+    credentials: true,
+  })
+);
 
 app.use("/api/v1", mainRouter);
 

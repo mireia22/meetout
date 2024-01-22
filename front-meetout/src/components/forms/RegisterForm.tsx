@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader";
+import InputFile from "../InputFile";
 
 const RegisterForm = () => {
   const [localUserData, setLocalUserData] = useState({
@@ -11,16 +12,17 @@ const RegisterForm = () => {
   const [avatar, setAvatar] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setLocalUserData((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
     });
   };
 
-  const registerUser = async (e) => {
+  const registerUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     try {
@@ -44,33 +46,23 @@ const RegisterForm = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.log("error", errorData.message);
-
         setError(errorData.message);
       } else {
-        navigate("/");
-      }
+        const newUser = await response.json();
+        setLocalUserData(newUser);
 
-      const newUser = await response.json();
-
-      if (!newUser) {
-        throw new Error("Server response is empty.");
+        navigate("/login");
       }
 
       setLoading(false);
-      setLocalUserData(newUser);
-      navigate("/login");
     } catch (err) {
-      setError(err.message);
+      console.log(error);
     }
   };
-  if (loading) {
-    return <Loader />;
-  }
+
   return (
     <form onSubmit={registerUser}>
-      {error && <p>{error}</p>}
-      <div>
+      <article>
         <label htmlFor="name">Name</label>
         <input
           type="text"
@@ -79,8 +71,8 @@ const RegisterForm = () => {
           value={localUserData.name}
           onChange={handleInputChange}
         />
-      </div>
-      <div>
+      </article>
+      <article>
         <label htmlFor="email">Email</label>
         <input
           type="text"
@@ -89,8 +81,8 @@ const RegisterForm = () => {
           value={localUserData.email}
           onChange={handleInputChange}
         />
-      </div>
-      <div>
+      </article>
+      <article>
         <label htmlFor="password">Password</label>
         <input
           type="password"
@@ -99,16 +91,14 @@ const RegisterForm = () => {
           value={localUserData.password}
           onChange={handleInputChange}
         />
-      </div>
-      <div>
-        <label htmlFor="avatar">Avatar</label>
-        <input
-          type="file"
-          name="avatar"
-          onChange={(e) => setAvatar(e.target.files && e.target.files[0])}
-        />
-      </div>
-      <button type="submit">Register</button>
+      </article>
+      <InputFile
+        onChange={(file: string) => setAvatar(file)}
+        inputName={"Choose Avatar 📂"}
+      />
+      {error && <p> 🚫{error}</p>}
+
+      <button>{loading ? <Loader /> : "Register"}</button>
     </form>
   );
 };

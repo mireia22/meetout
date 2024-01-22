@@ -1,14 +1,15 @@
 const { deleteImgCloudinary } = require("../../middlewares/files-middleware");
-const Route = require("../models/event-model");
-const Site = require("../models/asistant-model");
 const User = require("../models/User-model");
 const Event = require("../models/event-model");
 const Asistant = require("../models/asistant-model");
 const { HttpError } = require("../../middlewares/error-middleware");
+const { formatDate } = require("../../utils/formatDates");
 
 const getAllEvents = async (req, res, next) => {
   try {
-    const allEvents = await Event.find().populate("createdBy");
+    const allEvents = await Event.find()
+      .populate("createdBy")
+      .sort({ date: 1 });
     return res.status(200).json(allEvents);
   } catch (error) {
     return next(new HttpError(error));
@@ -35,7 +36,7 @@ const getAllEventAsistants = async (req, res, next) => {
     const assistantIds = event?.participants;
 
     if (!assistantIds || assistantIds.length === 0) {
-      return res.status(200).json({ message: "No asistants yet" }, []);
+      return res.status(404).json({ message: "No asistants yet" });
     }
     const asistants = [];
     for (const assistantId of assistantIds) {
@@ -86,7 +87,7 @@ const postEvent = async (req, res, next) => {
     const newEvent = new Event({
       title,
       ubication,
-      date,
+      date: formatDate(date),
       difficulty,
       sport,
       createdBy: req.user.id,
@@ -112,15 +113,12 @@ const postEvent = async (req, res, next) => {
 const inscribeToEvent = async (req, res, next) => {
   try {
     const { eventId } = req.params;
-
     if (!req.user) {
       return next(new HttpError("User not authenticated", 401));
     }
 
     const user = await User.findById(req.user._id);
-
     const event = await Event.findById(eventId);
-
     if (!user || !event) {
       return next(new HttpError("User or Event not Found", 404));
     }
@@ -129,6 +127,10 @@ const inscribeToEvent = async (req, res, next) => {
       return next(
         new HttpError("User is already inscribed to this event", 400)
       );
+    }
+
+    if (!req.body.email || !req.body.name) {
+      return next(new HttpError(`Complete all fields.`, 400));
     }
 
     const existingAssistant = await Asistant.findOne({ email: req.body.email });
@@ -152,7 +154,16 @@ const inscribeToEvent = async (req, res, next) => {
     newAssistant.assistedEvents.push(event._id);
 
     await newAssistant.save();
-    event.participants.push(newAssistant._id);
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventId,
+      {
+        $push: { participants: newAssistant._id },
+      },
+      { new: true }
+    );
+
+    await updatedEvent?.save();
+
     await User.findByIdAndUpdate(
       req.user._id,
       {
@@ -160,9 +171,12 @@ const inscribeToEvent = async (req, res, next) => {
       },
       { new: true }
     );
-    const updatedEvent = await event.save();
-
     return res.status(200).json({
+      assistant: {
+        id: newAssistant._id,
+        name: newAssistant.name,
+        email: newAssistant.email,
+      },
       message: `${newAssistant.name} confirmed assistance in ${updatedEvent?.title}`,
     });
   } catch (error) {
@@ -171,29 +185,53 @@ const inscribeToEvent = async (req, res, next) => {
 };
 const editEvent = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { eventId } = req.params;
+    console.log("eventId", eventId);
     const { title, ubication, date, sport, difficulty } = req.body;
 
-    const existingEvent = await Event.findById(id);
+    console.log("REQBODY", req.body);
+    const existingEvent = await Event.findById(eventId);
 
     if (existingEvent?.eventImage && req.file) {
       deleteImgCloudinary(existingEvent.eventImage);
     }
 
+    const updatedFields = {};
+    if (title !== "") {
+      updatedFields.title = title;
+    }
+    if (ubication !== "") {
+      updatedFields.ubication = ubication;
+    }
+    if (difficulty !== "") {
+      updatedFields.difficulty = difficulty;
+    }
+
+    if (date !== "") {
+      updatedFields.date = date;
+    }
+
+    if (sport !== "") {
+      updatedFields.sport = sport;
+    }
+
     const updatedEvent = await Event.findByIdAndUpdate(
-      id,
+      eventId,
       {
-        title,
-        date,
-        sport,
-        ubication,
-        difficulty,
-        eventImage: req.file ? req.file.path : "No Event image",
+        ...updatedFields,
+        eventImage: req.file
+          ? req.file.path
+          : existingEvent?.eventImage || "/front-meetout/public/event.png",
       },
-      {
-        new: true,
-      }
+      { new: true }
     );
+    if (!updatedEvent) {
+      console.error("Server response is empty or invalid.");
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+
+    return res.status(200).json(updatedEvent);
+    console.log("UPDATED EVEENT", updatedEvent);
     return res.status(200).json(updatedEvent);
   } catch (error) {
     return res.status(400).json({ message: error.message });
@@ -202,11 +240,14 @@ const editEvent = async (req, res, next) => {
 
 const deleteEventById = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const event = await Event.findByIdAndDelete(id);
+    const { eventId } = req.params;
+    console.log("eventID", eventId);
+    const event = await Event.findByIdAndDelete(eventId);
+
     if (event?.eventImage) {
       deleteImgCloudinary(event.eventImage);
     }
+
     return res.status(200).json({ message: "Event deleted successfully" });
   } catch (error) {
     return next(new HttpError(error));

@@ -7,6 +7,7 @@ const formatDate = (date) => {
   const formattedDate = format(inputDate, DATE_FORMAT);
   return formattedDate;
 };
+
 const formatTimeAgo = (date) => {
   const parsedDate = typeof date === "string" ? new Date(date) : date;
 

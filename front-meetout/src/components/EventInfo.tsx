@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import { formatTimeAgo } from "../utils/formatDates";
 import { useUserDataContext } from "../hooks/useUserData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { Event } from "../types/Types";
+import Creator from "./Creator";
 interface EventInfoProps {
   event: Event;
 }
@@ -22,19 +22,23 @@ const EventInfo: React.FC<EventInfoProps> = ({ event }) => {
     createdAt,
   } = event;
   const [error, setError] = useState("");
-  const { userData } = useUserDataContext();
-  console.log("USERDATA", userData);
+  const { userData, fetchUser } = useUserDataContext();
   const user = userData?.user;
-  // const { user } = userData || { user: null };
 
-  const isUserInscribed =
-    user?.asistedEvents?.some(
-      (assistedEvent) => assistedEvent._id === event._id
-    ) || false;
+  const isUserInscribed = user?.asistedEvents?.some(
+    (assistedEvent) => assistedEvent._id === event._id
+  );
+
+  const isUserCreator = user?.postedEvents.some(
+    (postedEvent) => postedEvent._id === event._id
+  );
+
   const navigate = useNavigate();
-
+  useEffect(() => {
+    fetchUser();
+  }, []);
   const handleInscriptionClick = () => {
-    if (userData === undefined) {
+    if (!userData) {
       setError("You must be registered.");
     } else {
       navigate(`/${_id}/inscription`);
@@ -44,43 +48,48 @@ const EventInfo: React.FC<EventInfoProps> = ({ event }) => {
   return (
     <div className="event-info">
       <h2>{title}</h2>
-
-      <div>
-        <p>{date && date}</p>
-
+      <article>
+        <h4>{date}</h4>
         <h4>{sport}</h4>
-      </div>
-
-      <div>
-        <h5>
+      </article>
+      <article>
+        <p className="ubication">
           <FaMapMarkerAlt />
           {ubication}
-        </h5>
-
-        <h4>{difficulty}</h4>
-      </div>
-      <div></div>
-      <div className="card-event-image">
+        </p>
+        <p>{difficulty}</p>
+      </article>
+      <article className="card-event-image">
         <img
           src={eventImage || "/front-meetout/public/event.png"}
           alt="Event image"
         />
-      </div>
-      <div>
+      </article>
+      <article>
         <p>{description}</p>
-      </div>
-      <div>
-        <button onClick={handleInscriptionClick}>
-          {isUserInscribed ? "Inscribed!" : "Inscription Here"}
+      </article>
+      {error && <p> 🚫{error}</p>}
+      <article>
+        <button
+          onClick={handleInscriptionClick}
+          style={{
+            backgroundColor: isUserInscribed ? "var(--gold)" : "var(--yellow)",
+            color: isUserInscribed ? "white" : "var(--black)",
+          }}
+          disabled={isUserInscribed}
+        >
+          {isUserInscribed ? "Inscribed!" : "Inscription"}
         </button>
         <Link to={`/${_id}/asistants`}>Assistants</Link>
-      </div>
-      <div>
-        <small>
-          Created by: {createdBy?.name} {formatTimeAgo(createdAt)}
-        </small>
-      </div>
-      {error && <p> {error}</p>}
+        {isUserCreator && (
+          <Link to={`/${_id}/edit`} className="warning-link">
+            Edit
+          </Link>
+        )}
+      </article>
+      <article>
+        <Creator creator={createdBy} createdAt={createdAt} />
+      </article>
     </div>
   );
 };

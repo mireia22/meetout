@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader";
 import { useUserDataContext } from "../../hooks/useUserData";
+import InputFile from "../InputFile";
 
 const EditProfileForm = () => {
   const [localUserData, setLocalUserData] = useState({
@@ -17,12 +18,14 @@ const EditProfileForm = () => {
 
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setLocalUserData((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const editUser = async (e) => {
+  const editUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     try {
@@ -54,14 +57,14 @@ const EditProfileForm = () => {
         setError(errorData.message);
       }
 
-      const newUser = await response.json();
+      const updatedUser = await response.json();
 
-      if (!newUser) {
+      if (!updatedUser) {
         throw new Error("Server response is empty.");
       }
 
       setLoading(false);
-      setLocalUserData(newUser);
+      setLocalUserData(updatedUser);
       navigate("/profile");
     } catch (err) {
       setError(err.message);
@@ -73,7 +76,7 @@ const EditProfileForm = () => {
   return (
     <form onSubmit={editUser}>
       {error && <p>{error}</p>}
-      <div>
+      <article>
         <label htmlFor="name">Name</label>
         <input
           type="text"
@@ -82,8 +85,8 @@ const EditProfileForm = () => {
           value={localUserData.name}
           onChange={handleInputChange}
         />
-      </div>
-      <div>
+      </article>
+      <article>
         <label htmlFor="email">Email</label>
         <input
           type="text"
@@ -92,8 +95,8 @@ const EditProfileForm = () => {
           value={localUserData.email}
           onChange={handleInputChange}
         />
-      </div>
-      <div>
+      </article>
+      <article>
         <label htmlFor="password">Password</label>
         <input
           type="password"
@@ -102,15 +105,11 @@ const EditProfileForm = () => {
           value={localUserData.password}
           onChange={handleInputChange}
         />
-      </div>
-      <div>
-        <label htmlFor="avatar">Avatar</label>
-        <input
-          type="file"
-          name="avatar"
-          onChange={(e) => setAvatar(e.target.files && e.target.files[0])}
-        />
-      </div>
+      </article>
+      <InputFile
+        onChange={(file: string) => setAvatar(file)}
+        inputName={"Choose Avatar 📂"}
+      />
       <button type="submit">Save</button>
     </form>
   );

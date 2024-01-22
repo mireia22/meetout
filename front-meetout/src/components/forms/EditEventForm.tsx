@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../Loader";
 import { useUserDataContext } from "../../hooks/useUserData";
 import InputFile from "../InputFile";
 import { DIFFICULTY, SPORTS } from "../../constants/constants";
 
-const PostEventForm = () => {
+const EditEventForm = () => {
   const [event, setEvent] = useState({
     title: "",
     date: "",
@@ -19,6 +19,7 @@ const PostEventForm = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const token = userData?.token;
+  const { eventId } = useParams();
 
   useEffect(() => {
     if (!token) {
@@ -34,36 +35,71 @@ const PostEventForm = () => {
     });
   };
 
-  const postEvent = async (e: React.FormEvent<HTMLFormElement>) => {
+  const editEvent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     try {
       setLoading(true);
 
       const formData = new FormData();
-      const { title, date, ubication, sport, difficulty } = event;
-      formData.append("title", title);
-      formData.append("date", date);
-      formData.append("ubication", ubication);
-      formData.append("sport", sport);
-      formData.append("difficulty", difficulty);
+      formData.append("title", event.title);
+      formData.append("date", event.date);
+      formData.append("ubication", event.ubication);
+      formData.append("sport", event.sport);
+      formData.append("difficulty", event.difficulty);
       if (eventImage) {
         formData.append("eventImage", eventImage);
       }
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/events`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/events/${eventId}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log("error", errorData.message);
+        setError(errorData.message);
+      }
+
+      const updatedEvent = await response.json();
+      console.log("UPDATED EVENT", updatedEvent);
+      if (!updatedEvent) {
+        throw new Error("Server response is empty.");
+      }
+
+      setLoading(false);
+      setEvent(updatedEvent);
+      navigate("/");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const deleteEvent = async () => {
+    setError("");
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/events/${eventId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("DELETE RESPONSE", response);
 
       if (!response.ok) {
         const errorData = await response.json();
         setError(errorData.message);
       } else {
-        const eventData = await response.json();
-        setEvent(eventData);
         navigate("/");
       }
       setLoading(false);
@@ -71,11 +107,10 @@ const PostEventForm = () => {
       console.log(error);
     }
   };
-
   return (
-    <form onSubmit={postEvent}>
+    <form onSubmit={editEvent}>
       <article>
-        <label htmlFor="">Title</label>
+        <label htmlFor="title">Title</label>
         <input
           type="text"
           placeholder="Title"
@@ -87,7 +122,7 @@ const PostEventForm = () => {
       </article>
 
       <article>
-        <label htmlFor="">Date</label>
+        <label htmlFor="date">Date</label>
         <input
           type="date"
           placeholder="Date"
@@ -97,7 +132,7 @@ const PostEventForm = () => {
         />
       </article>
       <article>
-        <label htmlFor="">Ubication</label>
+        <label htmlFor="ubication">Ubication</label>
         <input
           type="text"
           placeholder="Ubication 🗺️"
@@ -109,6 +144,7 @@ const PostEventForm = () => {
       <article>
         <label htmlFor="sport">Sport</label>
         <select name="sport" value={event.sport} onChange={handleInputChange}>
+          <option value=""> - </option>
           {SPORTS.map((sport) => (
             <option key={sport} value={sport}>
               {sport}
@@ -123,6 +159,7 @@ const PostEventForm = () => {
           value={event.difficulty}
           onChange={handleInputChange}
         >
+          <option value=""> - </option>
           {DIFFICULTY.map((difficulty) => (
             <option key={difficulty} value={difficulty}>
               {difficulty}
@@ -130,16 +167,17 @@ const PostEventForm = () => {
           ))}
         </select>
       </article>
-
       <InputFile
         onChange={(file: string) => setEventImage(file)}
         inputName="Event Image 📸"
       />
-      {error && <p>🚫 {error}</p>}
-
-      <button>{loading ? <Loader /> : "Post Event"}</button>
+      {error && <p>{error}</p>}
+      {loading ? <Loader /> : <button>Edit Event</button>}
+      <button onClick={deleteEvent} className="warining-btn">
+        Delete Event
+      </button>
     </form>
   );
 };
 
-export default PostEventForm;
+export default EditEventForm;

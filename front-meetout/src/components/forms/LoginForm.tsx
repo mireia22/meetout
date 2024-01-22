@@ -20,38 +20,36 @@ const LoginForm = () => {
     e.preventDefault();
     setError("");
     try {
+      setLoading(true);
+
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}/auth/login`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            credentials: "include",
           },
           body: JSON.stringify(userData),
         }
       );
       if (!response.ok) {
         const errorData = await response.json();
-        console.log("error", errorData.message);
-
         setError(errorData.message);
       } else {
         const loggedUser = await response.json();
         setUserData(loggedUser);
-
         navigate("/");
       }
+      setLoading(false);
     } catch (err) {
-      setError(err.message);
+      console.log(error);
     }
   };
 
-  if (loading) {
-    return <Loader />;
-  }
   return (
     <form onSubmit={loginUser}>
-      <div>
+      <article>
         <label htmlFor="">Email</label>
         <input
           type="text"
@@ -61,9 +59,9 @@ const LoginForm = () => {
           autoFocus
           onChange={handleInputChange}
         />
-      </div>
+      </article>
 
-      <div>
+      <article>
         <label htmlFor="">Password</label>
         <input
           type="password"
@@ -72,10 +70,10 @@ const LoginForm = () => {
           value={userData?.password}
           onChange={handleInputChange}
         />
-      </div>
+      </article>
       {error && <p>🚫{error}</p>}
 
-      <button>Login</button>
+      <button>{loading ? <Loader /> : "Login"}</button>
     </form>
   );
 };

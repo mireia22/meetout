@@ -1,46 +1,67 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loader from "../components/Loader";
+import { Asistant } from "../types/Types";
 
 const ListOfAssistants = () => {
   const [loading, setIsLoading] = useState(false);
   const { eventId } = useParams();
-  const [asistants, setAssistants] = useState([]);
+  const [asistants, setAssistants] = useState<Asistant[]>([]);
   const [event, setEvent] = useState(null);
+  const [error, setError] = useState("");
 
   const fetchEvents = async () => {
-    setIsLoading(true);
+    setError("");
     try {
+      setIsLoading(true);
+
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}/events/${eventId}/asistants`
       );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log("error", errorData.message);
+        setError(errorData.message);
+        return;
+      }
+
       const fetchedData = await response.json();
       console.log("fetched data", fetchedData);
 
       if (fetchedData.message === "Success") {
         setAssistants(fetchedData.asistants);
         setEvent(fetchedData.eventTitle);
+      } else {
+        setError("No assistants yet");
       }
     } catch (error) {
-      console.error("Error fetching data:", error.message);
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
     fetchEvents();
   }, []);
 
+  const countAsistants = (asistants: Asistant[]) => {
+    return asistants ? asistants.length : 0;
+  };
+
   if (loading) {
     return <Loader />;
   }
   return (
-    <div>
-      <h4>List of Participants in {event}:</h4>
+    <article>
       <ul className="asistants-list">
+        <h4>
+          Asistants in {event}: {countAsistants(asistants)}
+        </h4>
         {asistants ? (
           asistants.map((asistants) => (
-            <li key={asistants.id} className="asistant">
+            <li key={asistants._id} className="asistant">
               {asistants.name}
             </li>
           ))
@@ -48,7 +69,8 @@ const ListOfAssistants = () => {
           <h3>No assistants yet</h3>
         )}
       </ul>
-    </div>
+      {error && <p>{error}</p>}
+    </article>
   );
 };
 

@@ -1,5 +1,4 @@
 const User = require("../api/models/User-model");
-const TokenExpired = require("../api/models/token-expired-model");
 const { verifyToken } = require("../utils/token");
 
 const isAuth = async (req, res, next) => {
@@ -8,11 +7,6 @@ const isAuth = async (req, res, next) => {
   if (!token) return next(new Error("Unauthorized"));
   try {
     const decodedToken = verifyToken(token);
-
-    const expiredToken = TokenExpired.findOne({ token });
-    if (expiredToken) {
-      throw new Error(`Token was expired`);
-    }
 
     const user = await User.findById(decodedToken.id);
     if (!user) {
