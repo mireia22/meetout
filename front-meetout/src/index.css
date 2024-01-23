@@ -1,15 +1,12 @@
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
-  font-weight: 400;
   --white: rgba(255, 255, 255, 0.87);
   --yellow: rgb(246, 196, 47);
   --warning: #f3213a;
   --gold: #948455;
   --dark-purple: rgb(29, 7, 52);
   --black: #000000;
-  color: black;
-  background-color: var(--white);
 }
 
 * {
@@ -21,9 +18,6 @@
 }
 
 body {
-  display: flex;
-  flex-direction: column;
-  place-items: center;
   min-width: 100vw;
   min-height: 100vh;
 }
@@ -47,12 +41,10 @@ footer {
   justify-content: center;
 }
 main {
-  min-width: 100vw;
+  color: black;
+  background-color: var(--white);
   min-height: calc(100vh - (48px + 48px));
   padding: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 section {
@@ -60,13 +52,7 @@ section {
   flex-direction: column;
   text-align: center;
   align-items: center;
-  justify-content: center;
   gap: 2rem;
-}
-
-h1 {
-  font-size: 2.5rem;
-  line-height: 1.1;
 }
 
 /* LINKS */
@@ -88,7 +74,6 @@ button {
   border-radius: 6px;
   padding: 0.6rem 0.4rem;
   font-size: 1rem;
-  color: var(--black);
   background-color: var(--yellow);
   border: none;
   cursor: pointer;
@@ -99,7 +84,9 @@ button {
 form {
   display: flex;
   flex-direction: column;
-  align-items: start;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   gap: 1rem;
   background-color: var(--dark-purple);
   padding: 1rem;
@@ -108,8 +95,16 @@ form {
   color: var(--white);
   > article {
     display: flex;
-    flex-direction: column;
-    align-items: start;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    align-items: end;
+    > div {
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: start;
+    }
   }
   > button {
     align-self: center;
@@ -127,7 +122,7 @@ select {
 .inputfile-container {
   align-self: center;
   border: 2px solid var(--white);
-  padding: 0.2rem 0.3rem;
+  padding: 0.35rem;
   border-radius: 6px;
   background-color: rgba(255, 255, 255, 0.1);
 }

@@ -10,11 +10,11 @@ const Header = () => {
   return (
     <header>
       <Link to="/">
-        <IoHome size="1.3rem" />
+        <IoHome size="1.4rem" />
       </Link>
       {userData?.token ? (
         <nav>
-          <Link to="/create_event">Create Event</Link>
+          <Link to="/create-event">Create Event ➕</Link>
           <Link to="/profile">
             <Avatar user={userData.user} size="small" />
           </Link>

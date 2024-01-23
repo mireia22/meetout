@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Loader from "../Loader";
-import { useUserDataContext } from "../../hooks/useUserData";
-import InputFile from "../InputFile";
-import { DIFFICULTY, SPORTS } from "../../constants/constants";
+import { useUserDataContext } from "../hooks/useUserData";
+import EventForm from "../components/forms/EventForm";
 
-const EditEventForm = () => {
+const EditEvent = () => {
   const [event, setEvent] = useState({
     title: "",
     date: "",
@@ -108,76 +106,19 @@ const EditEventForm = () => {
     }
   };
   return (
-    <form onSubmit={editEvent}>
-      <article>
-        <label htmlFor="title">Title</label>
-        <input
-          type="text"
-          placeholder="Title"
-          name="title"
-          value={event.title}
-          autoFocus
-          onChange={handleInputChange}
-        />
-      </article>
-
-      <article>
-        <label htmlFor="date">Date</label>
-        <input
-          type="date"
-          placeholder="Date"
-          name="date"
-          value={event.date}
-          onChange={handleInputChange}
-        />
-      </article>
-      <article>
-        <label htmlFor="ubication">Ubication</label>
-        <input
-          type="text"
-          placeholder="Ubication 🗺️"
-          name="ubication"
-          value={event.ubication}
-          onChange={handleInputChange}
-        />
-      </article>
-      <article>
-        <label htmlFor="sport">Sport</label>
-        <select name="sport" value={event.sport} onChange={handleInputChange}>
-          <option value=""> - </option>
-          {SPORTS.map((sport) => (
-            <option key={sport} value={sport}>
-              {sport}
-            </option>
-          ))}
-        </select>
-      </article>
-      <article>
-        <label htmlFor="difficulty">Difficulty</label>
-        <select
-          name="difficulty"
-          value={event.difficulty}
-          onChange={handleInputChange}
-        >
-          <option value=""> - </option>
-          {DIFFICULTY.map((difficulty) => (
-            <option key={difficulty} value={difficulty}>
-              {difficulty}
-            </option>
-          ))}
-        </select>
-      </article>
-      <InputFile
-        onChange={(file: string) => setEventImage(file)}
-        inputName="Event Image 📸"
+    <section>
+      <h2>Edit event:</h2>
+      <EventForm
+        event={event}
+        onFormSubmit={editEvent}
+        deleteEvent={deleteEvent}
+        handleInputChange={handleInputChange}
+        error={error}
+        loading={loading}
+        setEventImage={setEventImage}
       />
-      {error && <p>{error}</p>}
-      {loading ? <Loader /> : <button>Edit Event</button>}
-      <button onClick={deleteEvent} className="warining-btn">
-        Delete Event
-      </button>
-    </form>
+    </section>
   );
 };
 
-export default EditEventForm;
+export default EditEvent;

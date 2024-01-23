@@ -63,22 +63,29 @@ const InscriptionForm = () => {
 
   return (
     <form onSubmit={makeInscription}>
-      <label htmlFor="name">Name</label>
-      <input
-        type="text"
-        placeholder="Name"
-        name="name"
-        value={asistantData.name}
-        onChange={handleInputChange}
-      />
-      <label htmlFor="email">Email</label>
-      <input
-        type="text"
-        placeholder="Email"
-        name="email"
-        value={asistantData.email}
-        onChange={handleInputChange}
-      />
+      <article>
+        <div>
+          <label htmlFor="name">Name</label>
+          <input
+            type="text"
+            placeholder="Name"
+            name="name"
+            value={asistantData.name}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="email">Email</label>
+          <input
+            type="text"
+            placeholder="Email"
+            name="email"
+            value={asistantData.email}
+            onChange={handleInputChange}
+          />
+        </div>
+      </article>
+
       {error && <p>🚫 {error}</p>}
       <button>{loading ? <Loader /> : "Inscribe"}</button>
     </form>
