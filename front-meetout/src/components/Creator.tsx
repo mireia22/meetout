@@ -4,11 +4,14 @@ import { formatTimeAgo } from "../utils/formatDates";
 import { UserData } from "../types/Types";
 
 interface CreatorProps {
-  creator: UserData;
-  createdAt: string;
+  creator?: UserData | null;
+  createdAt?: string | null;
 }
 
 const Creator: React.FC<CreatorProps> = ({ creator, createdAt }) => {
+  if (!creator || !createdAt) {
+    return null;
+  }
   return (
     <small>
       <Avatar user={creator} size="small" />

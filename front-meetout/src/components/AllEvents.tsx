@@ -5,11 +5,11 @@ import EventInfo from "./EventInfo";
 
 const AllEvents: React.FC = () => {
   const { events, setEvents } = useEventDataContext();
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchEvents = async () => {
-      setIsLoading(true);
+      setLoading(true);
       try {
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/events`);
         const fetchedEvents = await response.json();
@@ -17,12 +17,12 @@ const AllEvents: React.FC = () => {
       } catch (error) {
         console.error("Error fetching events:", error);
       }
-      setIsLoading(false);
+      setLoading(false);
     };
     fetchEvents();
   }, [setEvents]);
 
-  if (isLoading) {
+  if (loading) {
     return <Loader />;
   }
 

@@ -1,16 +1,13 @@
 import React from "react";
 import InputFile from "../InputFile";
+import { FetchedUserData } from "../../types/Types";
 
 interface UserFormProps {
   onFormSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   error: string;
   loading?: boolean;
-  userData: {
-    name: string;
-    email: string;
-    password: string;
-  };
-  setFileInput?: (file: string) => void;
+  userData: FetchedUserData;
+  setFileInput?: (file: File | null) => void;
   handleInputChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
@@ -25,7 +22,6 @@ const UserForm: React.FC<UserFormProps> = ({
 }) => {
   return (
     <form onSubmit={onFormSubmit}>
-      {error && <p>{error}</p>}
       <article>
         {setFileInput && (
           <div>
@@ -34,7 +30,7 @@ const UserForm: React.FC<UserFormProps> = ({
               type="text"
               placeholder="Name"
               name="name"
-              value={userData?.name || ""}
+              value={userData?.user?.name || ""}
               onChange={handleInputChange}
             />
           </div>
@@ -46,7 +42,7 @@ const UserForm: React.FC<UserFormProps> = ({
             type="text"
             placeholder="Email"
             name="email"
-            value={userData?.email || ""}
+            value={userData?.user?.email || ""}
             onChange={handleInputChange}
           />
         </div>
@@ -58,19 +54,20 @@ const UserForm: React.FC<UserFormProps> = ({
             type="password"
             placeholder="Password"
             name="password"
-            value={userData?.password || ""}
+            value={userData?.user?.password || ""}
             onChange={handleInputChange}
           />
         </div>
         {setFileInput && (
           <div>
             <InputFile
-              onChange={(file: string) => setFileInput(file)}
+              onChange={(file: File | null) => setFileInput(file)}
               inputName={"Choose Avatar 📂"}
             />
           </div>
         )}
       </article>
+      {error && <p>🚫 {error}</p>}
 
       <button type="submit">Save</button>
     </form>

@@ -1,5 +1,9 @@
-const InputFile = ({ onChange, inputName }) => {
-  const handleFileChange = (e) => {
+interface InputFileProps {
+  onChange: (file: File | null) => void;
+  inputName: string;
+}
+const InputFile: React.FC<InputFileProps> = ({ onChange, inputName }) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.files && e.target.files[0]);
   };
 

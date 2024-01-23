@@ -11,7 +11,7 @@ const EditEvent = () => {
     difficulty: "",
     ubication: "",
   });
-  const [eventImage, setEventImage] = useState("");
+  const [eventImage, setEventImage] = useState<File | null>();
   const { userData } = useUserDataContext();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);

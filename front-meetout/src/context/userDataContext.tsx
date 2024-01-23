@@ -39,7 +39,6 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       );
       const fetchedUser = await response.json();
-      console.log("fetched user", fetchedUser);
       setUserData((prevUserData) => ({
         ...prevUserData,
         user: fetchedUser,

@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import UserForm from "../components/forms/UserForm";
 import { useState } from "react";
 import { useUserDataContext } from "../hooks/useUserData";
+import { FetchedUserData } from "../types/Types";
 
 const Login = () => {
   const { userData, setUserData } = useUserDataContext();
@@ -10,13 +11,15 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    setUserData((prevState) => {
-      return { ...prevState, [e.target.name]: e.target.value };
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setUserData((prevState: FetchedUserData | null) => {
+      return { ...prevState!, [e.target.name]: e.target.value };
     });
   };
 
-  const loginUser = async (e) => {
+  const loginUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     try {
@@ -38,7 +41,11 @@ const Login = () => {
         setError(errorData.message);
       } else {
         const loggedUser = await response.json();
-        setUserData(loggedUser);
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          user: loggedUser.user,
+          token: loggedUser.token,
+        }));
         navigate("/");
       }
       setLoading(false);

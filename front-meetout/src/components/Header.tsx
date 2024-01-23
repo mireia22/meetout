@@ -6,7 +6,6 @@ import LogoutBtn from "./buttons/LogoutBtn";
 
 const Header = () => {
   const { userData } = useUserDataContext();
-
   return (
     <header>
       <Link to="/">

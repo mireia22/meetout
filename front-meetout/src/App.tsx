@@ -9,8 +9,8 @@ import PostEvent from "./pages/PostEvent";
 import Footer from "./components/Footer";
 import Inscription from "./pages/Inscription";
 import ListOfAssistants from "./pages/ListOfAssistants";
-import EditProfileForm from "./components/forms/EditProfileForm";
 import EditEvent from "./pages/EditEvent";
+import EditProfile from "./pages/EditProfile";
 const App = () => {
   return (
     <div className="app-container">
@@ -21,7 +21,7 @@ const App = () => {
           <Route path="/login" element={<Login />}></Route>
           <Route path="/register" element={<Register />}></Route>
           <Route path="/profile" element={<Profile />}></Route>
-          <Route path="/edit-profile" element={<EditProfileForm />}></Route>
+          <Route path="/edit-profile" element={<EditProfile />}></Route>
           <Route path="/create-event" element={<PostEvent />}></Route>
           <Route path="/:eventId/edit" element={<EditEvent />}></Route>
           <Route path="/:eventId/inscription" element={<Inscription />}></Route>

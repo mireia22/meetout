@@ -16,7 +16,7 @@ interface EventFormProps {
   ) => void;
   error: string;
   loading: boolean;
-  setEventImage: (file: string) => void;
+  setEventImage: (file: File | null) => void;
   deleteEvent?: () => void;
 }
 
@@ -93,7 +93,7 @@ const EventForm: React.FC<EventFormProps> = ({
         </div>
         <div>
           <InputFile
-            onChange={(file: string) => setEventImage(file)}
+            onChange={(file: File | null) => setEventImage(file)}
             inputName="Event Image 📸"
           />
         </div>

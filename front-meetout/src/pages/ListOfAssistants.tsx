@@ -56,9 +56,7 @@ const ListOfAssistants = () => {
   return (
     <article>
       <ul className="asistants-list">
-        <h4>
-          Asistants in {event}: {countAsistants(asistants)}
-        </h4>
+        <h4>Asistants: {countAsistants(asistants)}</h4>
         {asistants ? (
           asistants.map((asistants) => (
             <li key={asistants._id} className="asistant">
