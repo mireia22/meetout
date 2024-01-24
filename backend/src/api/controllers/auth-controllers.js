@@ -2,6 +2,7 @@ const { generateToken } = require("../../utils/token");
 const User = require("../models/User-model");
 const bcrypt = require("bcrypt");
 const { HttpError } = require("../../middlewares/error-middleware");
+const { isEmailValid } = require("../../utils/validFields");
 
 const register = async (req, res, next) => {
   try {
@@ -10,7 +11,9 @@ const register = async (req, res, next) => {
     if (!name || !email || !password) {
       return next(new HttpError("Fill in all the fields."));
     }
-
+    if (!isEmailValid(email)) {
+      return next(new HttpError("Invalid email address format.", 400));
+    }
     const userExist = await User.findOne({ email });
     if (userExist) return next(new HttpError("Email already registered.", 400));
 
@@ -36,6 +39,9 @@ const login = async (req, res, next) => {
 
     if (!email || !password) {
       return next(new HttpError("Fill in all the fields."));
+    }
+    if (!isEmailValid(email)) {
+      return next(new HttpError("Invalid email address format.", 400));
     }
 
     const validUser = await User.findOne({ email });
