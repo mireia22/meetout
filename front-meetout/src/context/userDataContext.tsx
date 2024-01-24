@@ -1,9 +1,9 @@
 import { createContext, useEffect, useState } from "react";
-import { FetchedUserData } from "../types/Types";
+import { UserDataWithToken } from "../types/Types";
 
 interface UserContextProps {
-  userData: FetchedUserData | null;
-  setUserData: React.Dispatch<React.SetStateAction<FetchedUserData | null>>;
+  userData: UserDataWithToken | null;
+  setUserData: React.Dispatch<React.SetStateAction<UserDataWithToken | null>>;
   fetchUser: () => Promise<void>;
 }
 
@@ -18,7 +18,7 @@ export const UserDataContext = createContext<UserContextProps>(initialState);
 export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [userData, setUserData] = useState<FetchedUserData | null>(() => {
+  const [userData, setUserData] = useState<UserDataWithToken | null>(() => {
     const storedUserData = localStorage.getItem("user");
     return storedUserData ? JSON.parse(storedUserData) : null;
   });
@@ -39,8 +39,10 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       );
       const fetchedUser = await response.json();
+
       setUserData((prevUserData) => ({
         ...prevUserData,
+        token: prevUserData?.token || "",
         user: fetchedUser,
       }));
     } catch (error) {

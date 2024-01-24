@@ -24,7 +24,7 @@ body {
 
 header,
 footer {
-  height: 3.5rem;
+  height: 3rem;
   padding: 1rem;
   background-color: var(--dark-purple);
   color: var(--white);
@@ -97,7 +97,7 @@ form {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 2rem;
+    gap: 1rem;
     align-items: end;
     > div {
       display: flex;
@@ -207,12 +207,13 @@ select {
   gap: 1.5rem;
   width: 20rem;
   justify-content: space-between;
+  margin: 0 auto;
 }
 .asistant {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  background-color: var(--white);
-  background-color: rgba(246, 196, 47, 0.7);
+  background-color: rgba(29, 7, 52, 0.65);
+  color: var(--white);
   padding: 0.5rem;
   font-weight: 600;
   border-radius: 5px;

@@ -74,7 +74,7 @@ const EditEvent = () => {
       setEvent(updatedEvent);
       navigate("/");
     } catch (err) {
-      setError(err.message);
+      console.log(error);
     }
   };
 
@@ -107,7 +107,7 @@ const EditEvent = () => {
   };
   return (
     <section>
-      <h2>Edit event:</h2>
+      <h2>Edit:</h2>
       <EventForm
         event={event}
         onFormSubmit={editEvent}

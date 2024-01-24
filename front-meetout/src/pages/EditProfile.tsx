@@ -3,14 +3,15 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import UserForm from "../components/forms/UserForm";
 import { useUserDataContext } from "../hooks/useUserData";
+import { UserData } from "../types/Types";
 
 const EditProfile = () => {
-  const [localUserData, setLocalUserData] = useState({
+  const [localUserData, setLocalUserData] = useState<UserData>({
     name: "",
     email: "",
     password: "",
   });
-  const [avatar, setAvatar] = useState<File | null>();
+  const [avatar, setAvatar] = useState<File | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -22,8 +23,10 @@ const EditProfile = () => {
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
-    setLocalUserData({ ...localUserData, [name]: value });
+    setLocalUserData((prevState) => {
+      const newValue = e.target.value !== null ? e.target.value : "";
+      return { ...prevState, [e.target.name]: newValue };
+    });
   };
 
   const editUser = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -33,13 +36,21 @@ const EditProfile = () => {
       setLoading(true);
 
       const formData = new FormData();
-      formData.append("name", localUserData.name);
-      formData.append("email", localUserData.email);
-      formData.append("password", localUserData.password);
-      if (avatar) {
-        formData.append("avatar", avatar);
+      if (localUserData.name !== null) {
+        formData.append("name", localUserData.name);
       }
 
+      if (localUserData.email !== null) {
+        formData.append("email", localUserData.email);
+      }
+
+      if (localUserData.password !== null) {
+        formData.append("password", localUserData.password);
+      }
+
+      if (avatar !== null) {
+        formData.append("avatar", avatar);
+      }
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}/users/edit`,
         {
@@ -68,7 +79,7 @@ const EditProfile = () => {
       setLocalUserData(updatedUser);
       navigate("/profile");
     } catch (err) {
-      setError(err.message);
+      console.log(error);
     }
   };
   if (loading) {
@@ -81,8 +92,9 @@ const EditProfile = () => {
         onFormSubmit={editUser}
         error={error}
         userData={localUserData}
-        setFileInput={setAvatar}
+        setFileInput={(file: File | null) => setAvatar(file)}
         handleInputChange={handleInputChange}
+        buttonText="Edit"
       />
     </section>
   );

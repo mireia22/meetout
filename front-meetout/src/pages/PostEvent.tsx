@@ -11,7 +11,7 @@ const PostEvent = () => {
     difficulty: "",
     ubication: "",
   });
-  const [eventImage, setEventImage] = useState("");
+  const [eventImage, setEventImage] = useState<File | null>(null);
   const { userData } = useUserDataContext();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -78,7 +78,7 @@ const PostEvent = () => {
         handleInputChange={handleInputChange}
         error={error}
         loading={loading}
-        setEventImage={setEventImage}
+        setEventImage={(file: File | null) => setEventImage(file)}
       />
     </section>
   );

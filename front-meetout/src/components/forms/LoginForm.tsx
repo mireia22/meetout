@@ -1,12 +1,11 @@
 import React from "react";
-import InputFile from "../InputFile";
-import { UserData } from "../../types/Types";
+import { LoginFormUserData } from "../../types/Types";
 
-interface UserFormProps {
+interface LoginFormProps {
   onFormSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   error: string;
   loading?: boolean;
-  userData?: UserData;
+  userData?: LoginFormUserData;
   setFileInput?: (file: File | null) => void;
   handleInputChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -14,28 +13,15 @@ interface UserFormProps {
   buttonText?: string;
 }
 
-const UserForm: React.FC<UserFormProps> = ({
+const LoginForm: React.FC<LoginFormProps> = ({
   onFormSubmit,
   error,
   userData,
-  setFileInput,
   handleInputChange,
-  buttonText,
 }) => {
   return (
     <form onSubmit={onFormSubmit}>
       <article>
-        <div>
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            placeholder="Name"
-            name="name"
-            value={userData?.name || ""}
-            onChange={handleInputChange}
-          />
-        </div>
-
         <div>
           <label htmlFor="email">Email</label>
           <input
@@ -58,19 +44,11 @@ const UserForm: React.FC<UserFormProps> = ({
             onChange={handleInputChange}
           />
         </div>
-        {setFileInput && (
-          <div>
-            <InputFile
-              onChange={(file: File | null) => setFileInput(file)}
-              inputName={"Choose Avatar 📂"}
-            />
-          </div>
-        )}
       </article>
       {error && <p>🚫 {error}</p>}
-      <button type="submit">{buttonText}</button>
+      <button type="submit">Login</button>
     </form>
   );
 };
 
-export default UserForm;
+export default LoginForm;

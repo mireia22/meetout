@@ -1,6 +1,6 @@
 const { deleteImgCloudinary } = require("../../middlewares/files-middleware");
 const User = require("../models/User-model");
-const Asistant = require("../models/asistant-model");
+const bcrypt = require("bcrypt");
 
 const getAllUsers = async (req, res, next) => {
   try {
@@ -50,7 +50,7 @@ const editUser = async (req, res, next) => {
       updatedFields.email = email;
     }
     if (password !== undefined && password !== existingUser.password) {
-      updatedFields.password = password;
+      updatedFields.password = bcrypt.hashSync(password, 10);
     }
 
     const updatedUser = await User.findByIdAndUpdate(

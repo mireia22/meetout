@@ -1,14 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import UserForm from "../components/forms/UserForm";
 import { useState } from "react";
+import { UserData } from "../types/Types";
 
 const Register = () => {
-  const [localUserData, setLocalUserData] = useState({
+  const [localUserData, setLocalUserData] = useState<UserData>({
     name: "",
     email: "",
     password: "",
   });
-  const [avatar, setAvatar] = useState("");
+  const [avatar, setAvatar] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -17,7 +18,8 @@ const Register = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setLocalUserData((prevState) => {
-      return { ...prevState, [e.target.name]: e.target.value };
+      const newValue = e.target.value !== null ? e.target.value : "";
+      return { ...prevState, [e.target.name]: newValue };
     });
   };
 
@@ -28,10 +30,19 @@ const Register = () => {
       setLoading(true);
 
       const formData = new FormData();
-      formData.append("name", localUserData.name);
-      formData.append("email", localUserData.email);
-      formData.append("password", localUserData.password);
-      if (avatar) {
+      if (localUserData.name !== null) {
+        formData.append("name", localUserData.name);
+      }
+
+      if (localUserData.email !== null) {
+        formData.append("email", localUserData.email);
+      }
+
+      if (localUserData.password !== null) {
+        formData.append("password", localUserData.password);
+      }
+
+      if (avatar !== null) {
         formData.append("avatar", avatar);
       }
 
@@ -49,7 +60,6 @@ const Register = () => {
       } else {
         const newUser = await response.json();
         setLocalUserData(newUser);
-
         navigate("/login");
       }
 
@@ -65,9 +75,10 @@ const Register = () => {
         onFormSubmit={registerUser}
         error={error}
         userData={localUserData}
-        setFileInput={setAvatar}
+        setFileInput={(file: File | null) => setAvatar(file)}
         handleInputChange={handleInputChange}
         loading={loading}
+        buttonText="Register"
       />
       <small>
         Already have an account?

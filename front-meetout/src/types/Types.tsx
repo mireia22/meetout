@@ -4,14 +4,19 @@ export type UserData = {
   email: string | null;
   password: string | null;
   avatar?: string | null;
-  postedEvents: Event[];
-  asistedEvents: Event[];
+  postedEvents?: Event[];
+  asistedEvents?: Event[];
   setUserData?: React.Dispatch<React.SetStateAction<UserData>> | null;
 };
 
-export type FetchedUserData = {
-  user: UserData | null;
-  token: string | null;
+export type UserDataWithToken = {
+  token: string;
+  user: UserData;
+};
+
+export type LoginFormUserData = {
+  email: string | null;
+  password: string | null;
 };
 
 export type Asistant = {

@@ -1,11 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
-import UserForm from "../components/forms/UserForm";
 import { useState } from "react";
 import { useUserDataContext } from "../hooks/useUserData";
-import { FetchedUserData } from "../types/Types";
+import { LoginFormUserData } from "../types/Types";
+import LoginForm from "../components/forms/LoginForm";
 
 const Login = () => {
-  const { userData, setUserData } = useUserDataContext();
+  const { setUserData } = useUserDataContext();
+  const [formUserData, setFormUserData] = useState<LoginFormUserData>({
+    email: "",
+    password: "",
+  });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -14,11 +18,10 @@ const Login = () => {
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setUserData((prevState: FetchedUserData | null) => {
+    setFormUserData((prevState: LoginFormUserData | null) => {
       return { ...prevState!, [e.target.name]: e.target.value };
     });
   };
-
   const loginUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
@@ -33,7 +36,7 @@ const Login = () => {
             "Content-Type": "application/json",
             credentials: "include",
           },
-          body: JSON.stringify(userData),
+          body: JSON.stringify(formUserData),
         }
       );
       if (!response.ok) {
@@ -57,10 +60,10 @@ const Login = () => {
   return (
     <section>
       <h2>Login:</h2>
-      <UserForm
+      <LoginForm
         onFormSubmit={loginUser}
         error={error}
-        userData={userData}
+        userData={formUserData}
         handleInputChange={handleInputChange}
         loading={loading}
       />

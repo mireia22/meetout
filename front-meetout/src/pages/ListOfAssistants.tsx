@@ -55,18 +55,20 @@ const ListOfAssistants = () => {
   }
   return (
     <article>
-      <ul className="asistants-list">
-        <h4>Asistants: {countAsistants(asistants)}</h4>
-        {asistants ? (
-          asistants.map((asistants) => (
-            <li key={asistants._id} className="asistant">
-              {asistants.name}
+      {asistants ? (
+        <ul className="asistants-list">
+          <h4>
+            Asistants {event}: {countAsistants(asistants)}
+          </h4>
+          {asistants.map((assistant) => (
+            <li key={assistant._id} className="asistant">
+              {assistant.name}
             </li>
-          ))
-        ) : (
-          <h3>No assistants yet</h3>
-        )}
-      </ul>
+          ))}
+        </ul>
+      ) : (
+        <h3>No assistants yet</h3>
+      )}
       {error && <p>{error}</p>}
     </article>
   );
