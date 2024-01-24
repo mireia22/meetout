@@ -29,7 +29,7 @@ const EventInfo: React.FC<EventInfoProps> = ({ event }) => {
     (assistedEvent) => assistedEvent._id === event._id
   );
 
-  const isUserCreator = user?.postedEvents.some(
+  const isUserCreator = user?.postedEvents?.some(
     (postedEvent) => postedEvent._id === event._id
   );
 
